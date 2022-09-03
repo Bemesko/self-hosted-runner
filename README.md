@@ -29,4 +29,6 @@ docker run [docker_user]/gh-runner:[repo_name]
 
 * [X] Make optional parameter for docker username
 
+* [ ] Specify runner name and tags in a configuration file perhaps
+
 * [ ] Consider adding other types of runners? (currently only supports linux x64)
