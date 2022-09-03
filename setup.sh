@@ -40,12 +40,14 @@ build_runner_image() {
   local image_name="${docker_user}gh-runner:${repo_name}"
 
   docker build \
+    --no-cache \
     --tag $image_name \
     --build-arg GITHUB_REPO=${repo_url} \
     --secret id=GITHUB_TOKEN,src=$(pwd)/secrets.txt \
     .
 
-  echo "Built image ${image_name}"
+  echo "[SUCCESS] Built image ${image_name}"
+  echo "Use docker run ${image_name} to start your runner!"
 }
 
 main() {
