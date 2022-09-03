@@ -4,8 +4,8 @@ err() {
 }
 
 get_runner_token(){
-  local github_user="$1"
-  local github_repo="$2"
+  local repo_owner="$1"
+  local repo_name="$2"
   local github_token="$3"
   local json_file
   local runner_token
@@ -14,7 +14,7 @@ get_runner_token(){
 
   curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${github_token}" \
   -o "$json_file" --silent \
-  https://api.github.com/repos/"${github_user}"/"${github_repo}"/actions/runners/registration-token
+  https://api.github.com/repos/"${repo_owner}"/"${repo_name}"/actions/runners/registration-token
 
   runner_token=$(jq -r '.token' "$json_file")
 
@@ -29,33 +29,37 @@ get_runner_token(){
 }
 
 build_runner_image() {
-  local github_user="$1"
-  local github_repo="$2"
-  local repo_url="https://github.com/${github_user}/${github_repo}"
+  local repo_url="$1"
+  local repo_name="$2"
+  local image_name="gh-runner:${repo_name}"
 
   docker build \
-    --tag "gh-runner:${github_repo}" \
+    --tag $image_name \
     --build-arg GITHUB_REPO=${repo_url} \
     --secret id=GITHUB_TOKEN,src=$(pwd)/secrets.txt \
     .
 
-  echo "Built image gh-runner:${github_repo}"
+  echo "Built image ${image_name}"
 }
 
 main() {
-  local github_user="$1"
-  local github_repo="$2"
-  local github_token="$3"
+  local repo_url="$1"
+  local github_token="$2"
+  local repo_owner
+  local repo_name
   local runner_token
 
-  if [[ -z $github_user || -z $github_repo || -z $github_token ]]; then
+  if [[ -z $repo_url || -z $github_token ]]; then
     err "Wrong number of arguments."
-    err "Usage: setup.sh GITHUB_USER GITHUB_REPO GITHUB_TOKEN"
+    err "Usage: setup.sh REPO_URL GITHUB_TOKEN"
     exit 1
   fi
 
-  get_runner_token $github_user $github_repo $github_token > secrets.txt
-  build_runner_image $github_user $github_repo
+  repo_owner=$(echo $repo_url | cut -d "/" -f 4)
+  repo_name=$(echo $repo_url | cut -d "/" -f 5)
+
+  get_runner_token $repo_owner $repo_name $github_token > secrets.txt
+  build_runner_image $repo_url $repo_name
 }
 
 set -e
