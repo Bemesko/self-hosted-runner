@@ -31,7 +31,13 @@ get_runner_token(){
 build_runner_image() {
   local repo_url="$1"
   local repo_name="$2"
-  local image_name="gh-runner:${repo_name}"
+  local docker_user="$3"
+
+  if [[ ! -z $docker_user ]]; then
+    docker_user="$docker_user/"
+  fi
+
+  local image_name="${docker_user}gh-runner:${repo_name}"
 
   docker build \
     --tag $image_name \
@@ -45,13 +51,14 @@ build_runner_image() {
 main() {
   local repo_url="$1"
   local github_token="$2"
+  local docker_user="$3"
   local repo_owner
   local repo_name
   local runner_token
 
   if [[ -z $repo_url || -z $github_token ]]; then
     err "Wrong number of arguments."
-    err "Usage: setup.sh REPO_URL GITHUB_TOKEN"
+    err "Usage: setup.sh REPO_URL GITHUB_TOKEN [DOCKER_USER]"
     exit 1
   fi
 
@@ -59,7 +66,7 @@ main() {
   repo_name=$(echo $repo_url | cut -d "/" -f 5)
 
   get_runner_token $repo_owner $repo_name $github_token > secrets.txt
-  build_runner_image $repo_url $repo_name
+  build_runner_image $repo_url $repo_name $docker_user
 }
 
 set -e
