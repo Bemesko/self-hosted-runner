@@ -25,6 +25,8 @@ docker run [docker_user]/gh-runner:[repo_name]
 
 ## Checklist
 
-[X] Receive an API token insted of the repo-specific token
-[X] Make optional parameter for docker username
-[ ] Consider adding other types of runners? (currently only supports linux x64)
+* [X] Receive an API token insted of the repo-specific token
+
+* [X] Make optional parameter for docker username
+
+* [ ] Consider adding other types of runners? (currently only supports linux x64)
