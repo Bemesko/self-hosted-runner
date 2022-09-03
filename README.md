@@ -8,7 +8,7 @@ Docker image format so I can easily set up runners for my stuff.
 Not sure if I'll push this to Docker Hub, so here's how to build it:
 
 ```bash
- docker build -t gh-runner id=GITHUB_TOKEN,src=$(pwd)/secrets.txt .
+ docker build -t gh-runner:<YOUR_REPO> --build-arg GITHUB_REPO=<GITHUB_REPO> --secret id=GITHUB_TOKEN,src=$(pwd)/secrets.txt .
 ```
 
 - Note, you can also specify the repository by setting the GITHUB_REPO

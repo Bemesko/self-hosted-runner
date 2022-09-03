@@ -2,7 +2,7 @@
 
 FROM ubuntu:20.04
 
-ENV GITHUB_REPO=https://github.com/Bemesko/telegram-msg-to-notion-task
+ARG GITHUB_REPO
 
 RUN apt update
 RUN apt install -y curl
