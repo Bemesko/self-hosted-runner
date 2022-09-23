@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 err() {
   echo "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: $*" >&2
 }
@@ -33,17 +35,14 @@ build_runner_image() {
   local repo_name="$2"
   local docker_user="$3"
 
-  if [[ ! -z $docker_user ]]; then
+  if [[ ! -z "$docker_user" ]]; then
     docker_user="$docker_user/"
   fi
 
-  local image_name="${docker_user}gh-runner:${repo_name}"
+  local image_name="${docker_user}gh-runner"
 
   docker build \
-    --no-cache \
     --tag $image_name \
-    --build-arg GITHUB_REPO=${repo_url} \
-    --secret id=GITHUB_TOKEN,src=$(pwd)/secrets.txt \
     .
 
   echo "[SUCCESS] Built image ${image_name}"
@@ -71,5 +70,4 @@ main() {
   build_runner_image $repo_url $repo_name $docker_user
 }
 
-set -e
 main "$@"
