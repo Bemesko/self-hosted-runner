@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 ARG GITHUB_REPO
 
 RUN apt update \
-    && apt install -y curl
+    && apt install -y curl jq
 
 RUN useradd \
     --create-home \
